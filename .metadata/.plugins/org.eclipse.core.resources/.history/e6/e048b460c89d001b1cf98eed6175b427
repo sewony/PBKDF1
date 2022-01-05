@@ -1,0 +1,68 @@
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.security.MessageDigest;
+import java.security.Security;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+public class Fileencryption {
+
+public static void main(String args[]) throws Exception
+{
+	Security.addProvider(new BouncyCastleProvider());
+	
+	byte[]        keyBytes = new byte[] {
+            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+            0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+            };
+
+	byte[]        ivBytes = new byte[] {
+            0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00,
+            0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00};
+
+	SecretKeySpec key = new SecretKeySpec(keyBytes, "AES");
+	IvParameterSpec iv = new IvParameterSpec(ivBytes);
+
+	Cipher cipher = null;
+
+   cipher =  Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");//객체생성
+   cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+   
+   FileInputStream fis=new FileInputStream("");//파일 읽어오기
+   FileOutputStream fos=new FileOutputStream("",true);//파일 저장 
+   System.out.println("input : "+fis);//Utils.toHexString());
+  //여기부터 내가 짠 코드
+   int BUF_SIZE=1024;
+   byte[] buffer=new byte[BUF_SIZE];//cipher.getOutputSize(BUF_SIZE)];//버퍼 할당
+   //FileInputStream fis1=new FileInputStream("/C:/Users/sewon/Downloads/06.pdf");//파일 읽어오기
+   int read=BUF_SIZE;
+     while((read=fis.read(buffer,0,BUF_SIZE))>0){
+    	 fos.write(buffer,0,BUF_SIZE);
+     }
+     System.out.println("(1)암호문: "+Utils.toHexString(buffer));
+   // fis1.close();//fis1 close
+   
+     cipher.update(buffer,0,read); 
+ 	 cipher.doFinal(buffer);
+  
+   //System.out.println("(2)암호문: "+Utils.toHexString(buffer));
+   fos.flush();
+   fis.close();//fis1 close
+   fos.close();//fis2  close
+   System.out.println("Rmx");
+	//cipher.init(Cipher.DECRYPT_MODE, key, iv);
+	/*byte[]plainText=
+			new byte[cipher.getOutputSize(buffer.length)];
+	int decryptedLen=cipher.update(buffer, 0,buffer.length,plainText,0);
+	decryptedLen+=cipher.doFinal(plainText,decryptedLen);
+	System.out.println("plainText :"+Utils.toHexString(plainText));
+
+   */
+    }
+
+
+}

@@ -1,0 +1,88 @@
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.security.MessageDigest;
+import java.security.Security;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import java. io.FileNotFoundException;
+
+public class Fileencryption {
+
+public static void main(String args[]) throws Exception
+{
+	Security.addProvider(new BouncyCastleProvider());
+	
+	byte[]        keyBytes = new byte[] {
+            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+            0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+            };
+
+	byte[]        ivBytes = new byte[] {
+            0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00,
+            0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00};
+
+	SecretKeySpec key = new SecretKeySpec(keyBytes, "AES");
+	IvParameterSpec iv = new IvParameterSpec(ivBytes);
+
+	Cipher cipher = null;
+
+   cipher =  Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");//객체생성
+   cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+  // System.out.println("input : "+Utils.toHexString(input));
+  //여기부터 내가 짠 코드
+   int BUF_SIZE=1024;
+   byte[] buffer=new byte[BUF_SIZE];//버퍼 할당
+   FileInputStream fis1=new FileInputStream("/C:/Users/sewon/Downloads/06.pdf");//파일 읽어오기
+   int read=BUF_SIZE;
+     while((read=fis1.read(buffer,0,BUF_SIZE))>0){
+    //fis1.write(fis1);
+    	cipher.update(buffer,0,read); 
+    	cipher.doFinal(buffer);
+     }
+     byte[]out=Cipher.digest();
+     fis1.close();
+     //int processLen=cipher.update(input,0,input.length,output,0/*read*/);
+	 //cipher.update("Hellojava",0,fis1.length,fis2,0);
+    // processLen+=cipher.doFinal(buffer,processLen);
+     
+ /*  FileOutputStream fis2=new FileOutputStream("06.pdf");//파일 쓰기 
+   
+   byte[] plainText= new byte[output.length];
+   //byte[] plainText=new byte[cipher.getOutputSize(output.length)];
+   int write=BUF_SIZE;
+   while((read=fis1.read(output,0,BUF_SIZE))>0){
+	   //fis2.write();
+   }
+   int decryptedLen=cipher.update(output,0,output.length,plainText,0);
+   decryptedLen+=cipher.doFinal(plainText,decryptedLen);
+   fis2.close();//close
+   */
+   //여기까지 encryption
+ /*  byte[] buffer=new byte[cipher.getOutputSize(input.length)];//버퍼 할당
+   int processLen;
+   processLen=cipher.update(input,0,input.length,buffer,0);
+   processLen=cipher.doFinal(buffer, processLen);*/
+   //읽어온 걸 update로 처리
+   //int read=BUF_SIZE;
+ //  while((read=fis.read(buffer,0,BUF_SIZE))>0){
+   //cipher.update(buffer,0,read);
+   //doFinal(//input)
+  // }
+  // System.out.println("output : "+Utils.toHexString(buffer));
+   /*	
+	cipher.init(Cipher.DECRYPT_MODE, key, iv);
+	byte[]plainText=
+			new byte[cipher.getOutputSize(buffer.length)];
+	int decryptedLen=cipher.update(buffer, 0,buffer.length,plainText,0);
+	decryptedLen+=cipher.doFinal(plainText,decryptedLen);
+	System.out.println("plainText :"+Utils.toHexString(plainText));
+
+   */
+    }
+
+
+}
